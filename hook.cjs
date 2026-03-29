@@ -23,9 +23,11 @@ function main() {
     const fh = state.rate_limits.five_hour;
     const sd = state.rate_limits.seven_day;
 
-    // Snapshot current usage before the prompt runs — statusline computes delta from this
-    if (fh) {
-      state.snapshot = {
+    // Snapshot current usage keyed by session — statusline computes delta from this
+    const sessionId = input.session_id;
+    if (fh && sessionId) {
+      if (!state.snapshots) state.snapshots = {};
+      state.snapshots[sessionId] = {
         five_hour_pct: fh.pct,
         seven_day_pct: sd ? sd.pct : null,
         ts: Date.now(),
