@@ -2,9 +2,7 @@
 
 Know your Claude Code budget before you hit the wall.
 
-```
-5h ▓▓▓│░░░░░ 24% (+1.2) ⇣6% ➞3h15m │ ▽ off-peak 21h05m
-```
+![cc-budget status line](demo/cc-budget-preview-cropped.png)
 
 cc-budget adds budget intelligence to Claude Code's status line — pacing targets, per-prompt cost tracking, peak/off-peak awareness, and threshold warnings. It answers the question every Max/Pro user has: **"How many prompts can I afford right now?"**
 
