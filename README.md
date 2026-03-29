@@ -89,6 +89,19 @@ Edit `~/.config/cc-budget/config.json`:
 node ~/.claude/hooks/cc-budget/statusline.cjs --legend
 ```
 
+## ccstatusline integration
+
+If you use [ccstatusline](https://github.com/sirmalloc/ccstatusline), add cc-budget as a Custom Command widget instead of replacing your statusline:
+
+```yaml
+widgets:
+  - type: customCommand
+    command: "node ~/.claude/hooks/cc-budget/statusline.cjs --widget"
+    timeout: 1000
+```
+
+Widget mode outputs only what ccstatusline doesn't have: pacing (`⇡`/`⇣`), per-prompt delta, and peak indicator. The hook warnings work regardless of which statusline you use.
+
 ## How it works
 
 1. **Status line** reads the `rate_limits` JSON that Claude Code pipes to stdin on every assistant message

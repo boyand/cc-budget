@@ -85,6 +85,8 @@ ${B}CONFIG${R}
   process.exit(0);
 }
 
+const WIDGET_MODE = process.argv.includes('--widget');
+
 function main() {
   try {
     const raw = fs.readFileSync(0, 'utf-8');
@@ -94,14 +96,17 @@ function main() {
     const { loadConfig } = require('./lib/config.cjs');
     const { updateFromStatusLine, writeState } = require('./lib/state.cjs');
     const { isPeak } = require('./lib/peak.cjs');
-    const { formatStatusLine } = require('./lib/format.cjs');
+    const { formatStatusLine, formatWidget } = require('./lib/format.cjs');
 
     const config = loadConfig();
     const state = updateFromStatusLine(input);
     state.is_peak = isPeak(config.peak);
     writeState(state);
 
-    process.stdout.write(formatStatusLine(state, config, state.is_peak));
+    const output = WIDGET_MODE
+      ? formatWidget(state, config, state.is_peak)
+      : formatStatusLine(state, config, state.is_peak);
+    process.stdout.write(output);
   } catch (e) {
     process.stderr.write(`[cc-budget] statusline error: ${e.stack || e.message}\n`);
   }
