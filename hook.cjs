@@ -23,6 +23,16 @@ function main() {
     const fh = state.rate_limits.five_hour;
     const sd = state.rate_limits.seven_day;
 
+    // Snapshot current usage before the prompt runs — statusline computes delta from this
+    if (fh) {
+      state.snapshot = {
+        five_hour_pct: fh.pct,
+        seven_day_pct: sd ? sd.pct : null,
+        ts: Date.now(),
+      };
+      writeState(state);
+    }
+
     if (!fh || (fh.resets_at && fh.resets_at * 1000 < Date.now())) return;
 
     const { thresholds } = config;
