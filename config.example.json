@@ -1,0 +1,16 @@
+{
+  "thresholds": {
+    "warn_5h": 90,
+    "critical_5h": 95,
+    "warn_7d": 80,
+    "critical_7d": 90
+  },
+  "peak": {
+    "start_hour": 5,
+    "end_hour": 11,
+    "timezone": "America/Los_Angeles",
+    "weekdays_only": true
+  },
+  "show_delta": true,
+  "show_7d": "auto"
+}
