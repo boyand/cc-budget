@@ -79,7 +79,7 @@ function main() {
       }));
     }
   } catch (e) {
-    process.stderr.write(`[cc-budget] hook error: ${e.stack || e.message}\n`);
+    // Silent -- stderr triggers Claude Code's "hook error" display
   }
 }
 

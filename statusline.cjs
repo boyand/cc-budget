@@ -108,7 +108,7 @@ function main() {
       : formatStatusLine(state, config, state.is_peak);
     process.stdout.write(output);
   } catch (e) {
-    process.stderr.write(`[cc-budget] statusline error: ${e.stack || e.message}\n`);
+    // Silent -- stderr triggers Claude Code's "hook error" display
   }
 }
 
