@@ -75,7 +75,11 @@ ${B}EXAMPLES${R}
   console.log(`  ${D}Moderate:${R}     ${formatStatusLine(mk(55, 42, 2.5, 2.1), config, false)}`);
   console.log(`  ${D}Warning:${R}      ${formatStatusLine(mk(78, 45, 1.5, 3.5), config, true)}`);
   console.log(`  ${D}Critical:${R}     ${formatStatusLine(mk(94, 86, 0.5, 8.2), config, true)}`);
-  console.log(`  ${D}API user:${R}     ${formatStatusLine({ rate_limits: { five_hour: null, seven_day: null }, session_cost_usd: 14.50 }, config, false)}`);
+  const today = new Date().toISOString().slice(0, 10);
+  const month = today.slice(0, 7);
+  const mkLedger = (sessions) => Object.fromEntries(sessions.map(([id, cost, d]) => [id, { cost, day: d || today, month: (d || today).slice(0, 7) }]));
+  console.log(`  ${D}API/Enterprise (low):${R}   ${formatStatusLine({ rate_limits: { five_hour: null, seven_day: null }, session_cost_usd: 0.84, delta: { cost_usd: 0.32 }, ledger: mkLedger([['s1', 0.84], ['s2', 1.20]]) }, config, false)}`);
+  console.log(`  ${D}API/Enterprise (high):${R}  ${formatStatusLine({ rate_limits: { five_hour: null, seven_day: null }, session_cost_usd: 14.50, delta: { cost_usd: 2.15 }, ledger: mkLedger([['s3', 14.50], ['s4', 8.30], ['s5', 12.10, month + '-01']]) }, config, false)}`);
   console.log(`
 ${B}CONFIG${R}
 

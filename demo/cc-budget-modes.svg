@@ -1,0 +1,30 @@
+<svg width="560" height="44" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <clipPath id="outer"><rect width="560" height="44" rx="6"/></clipPath>
+    <style>
+      @keyframes m1{0%,37%{opacity:1}43%,90%{opacity:0}97%,100%{opacity:1}}
+      @keyframes m2{0%,43%{opacity:0}50%,87%{opacity:1}93%,100%{opacity:0}}
+      .m1{animation:m1 8s ease-in-out infinite}
+      .m2{animation:m2 8s ease-in-out infinite}
+      text{font-family:'SFMono-Regular',Consolas,'Liberation Mono',Menlo,monospace;font-size:12px}
+    </style>
+  </defs>
+  <g clip-path="url(#outer)">
+    <!-- Backgrounds -->
+    <rect width="560" height="44" fill="#161b22"/>
+    <rect width="105" height="44" fill="#21262d"/>
+    <line x1="105" y1="8" x2="105" y2="36" stroke="#30363d" stroke-width="1"/>
+
+    <!-- Mode 1: Max / Pro -->
+    <g class="m1">
+      <text x="20" y="27" fill="#8b949e">Max / Pro</text>
+      <text x="118" y="27" xml:space="preserve"><tspan font-weight="bold" fill="#3fb950">5h</tspan><tspan fill="#3fb950"> ▓▓▓▓</tspan><tspan fill="#e6edf3" font-weight="bold">│</tspan><tspan fill="#3fb950">░░░</tspan><tspan fill="#3fb950"> 55%</tspan><tspan fill="#8b949e"> (+2.1)</tspan><tspan fill="#f85149"> ⇡5%</tspan><tspan fill="#8b949e"> ➞2h29m</tspan><tspan fill="#8b949e">  │  </tspan><tspan fill="#3fb950">▽</tspan><tspan fill="#8b949e"> off-peak 3h22m</tspan></text>
+    </g>
+
+    <!-- Mode 2: Enterprise -->
+    <g class="m2">
+      <text x="17" y="27" fill="#8b949e">Enterprise</text>
+      <text x="118" y="27"><tspan fill="#f85149">$14.50</tspan><tspan fill="#8b949e"> (+$2.15)</tspan><tspan fill="#8b949e">  │  </tspan><tspan fill="#8b949e">$22.80 today</tspan><tspan fill="#8b949e">  │  </tspan><tspan fill="#8b949e">$34.90 Mar</tspan></text>
+    </g>
+  </g>
+</svg>

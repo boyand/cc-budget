@@ -3,7 +3,9 @@
     "warn_5h": 90,
     "critical_5h": 95,
     "warn_7d": 80,
-    "critical_7d": 90
+    "critical_7d": 90,
+    "warn_cost_usd": 5,
+    "critical_cost_usd": 20
   },
   "peak": {
     "start_hour": 5,
@@ -12,5 +14,6 @@
     "weekdays_only": true
   },
   "show_delta": true,
-  "show_7d": "auto"
+  "show_7d": "auto",
+  "enterprise_discount": 0
 }

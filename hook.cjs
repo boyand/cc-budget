@@ -25,11 +25,13 @@ function main() {
 
     // Snapshot current usage keyed by session — statusline computes delta from this
     const sessionId = input.session_id;
-    if (fh && sessionId) {
+    const costUsd = state.session_cost_usd;
+    if (sessionId && (fh || costUsd != null)) {
       if (!state.snapshots) state.snapshots = {};
       state.snapshots[sessionId] = {
-        five_hour_pct: fh.pct,
+        five_hour_pct: fh ? fh.pct : null,
         seven_day_pct: sd ? sd.pct : null,
+        session_cost_usd: costUsd,
         ts: Date.now(),
       };
       writeState(state);
