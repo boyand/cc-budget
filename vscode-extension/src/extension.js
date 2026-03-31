@@ -173,15 +173,22 @@ function update() {
     text += ` (+${state.delta.five_hour.toFixed(1)})`;
   }
 
+  // 7d usage
+  if (sd) {
+    const pct7d = Math.round(sd.pct);
+    text += ` | 7d: ${pct7d}%`;
+  }
+
   // Peak indicator
   if (peak) text += ' \u25B2pk';
 
   statusBarItem.text = text;
 
-  // Background color for severity
-  if (pct >= 90) {
+  // Background color for severity (use worst of 5h and 7d)
+  const worstPct = sd ? Math.max(pct, Math.round(sd.pct)) : pct;
+  if (worstPct >= 90) {
     statusBarItem.backgroundColor = new vscode.ThemeColor('statusBarItem.errorBackground');
-  } else if (pct >= 70) {
+  } else if (worstPct >= 70) {
     statusBarItem.backgroundColor = new vscode.ThemeColor('statusBarItem.warningBackground');
   } else {
     statusBarItem.backgroundColor = undefined;

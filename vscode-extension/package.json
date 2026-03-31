@@ -5,11 +5,40 @@
   "version": "0.1.0",
   "publisher": "cc-budget",
   "license": "MIT",
+  "author": {
+    "name": "Boyan Dimitrov"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/boyand/cc-budget.git",
+    "directory": "vscode-extension"
+  },
+  "homepage": "https://github.com/boyand/cc-budget#vs-code-extension",
+  "bugs": {
+    "url": "https://github.com/boyand/cc-budget/issues"
+  },
+  "icon": "icon.png",
+  "galleryBanner": {
+    "color": "#1e1e1e",
+    "theme": "dark"
+  },
   "engines": {
     "vscode": "^1.85.0"
   },
-  "categories": ["Other"],
-  "activationEvents": ["*"],
+  "categories": [
+    "Other"
+  ],
+  "keywords": [
+    "claude",
+    "claude-code",
+    "budget",
+    "rate-limit",
+    "usage",
+    "anthropic"
+  ],
+  "activationEvents": [
+    "onStartupFinished"
+  ],
   "main": "./src/extension.js",
   "contributes": {
     "commands": [

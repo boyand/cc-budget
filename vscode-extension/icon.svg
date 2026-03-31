@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+  <rect width="128" height="128" rx="16" fill="#1e1e1e"/>
+  <!-- Budget bar background -->
+  <rect x="16" y="52" width="96" height="24" rx="4" fill="#333"/>
+  <!-- Budget bar filled -->
+  <rect x="16" y="52" width="58" height="24" rx="4" fill="#4ec9b0"/>
+  <!-- Pace marker -->
+  <rect x="62" y="48" width="3" height="32" rx="1" fill="#fff"/>
+  <!-- Label -->
+  <text x="64" y="40" text-anchor="middle" fill="#ccc" font-family="monospace" font-size="16" font-weight="bold">5h 45%</text>
+  <text x="64" y="100" text-anchor="middle" fill="#4ec9b0" font-family="monospace" font-size="14">⇣ on pace</text>
+</svg>

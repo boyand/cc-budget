@@ -156,25 +156,44 @@ Zero external dependencies. Zero API calls. All data comes from Claude Code's bu
 
 ## VS Code Extension
 
-A companion VS Code extension shows cc-budget data in your editor's status bar — no terminal needed.
+A companion VS Code extension shows cc-budget data in your editor's status bar — visible without switching to the Claude Code terminal.
 
-**Features:**
-- Status bar item with 5h usage %, pace indicator, and per-prompt delta
-- Background color changes at warning (70%) and critical (90%) thresholds
+**What you see:**
+
+```
+$(dashboard) 5h: 55% ⇣3% (+1.2) | 7d: 82% ▲pk
+```
+
+- 5h and 7d usage percentages
+- Pace indicator (⇡ over / ⇣ under)
+- Per-prompt delta cost
+- Peak hours indicator
+- Background color: yellow at 70%, red at 90% (uses worst of 5h/7d)
+- Click for a detailed modal breakdown
 - Native VS Code notifications at threshold crossings
-- Hover tooltip with full details (reset time, 7d usage, peak status)
-- Click the status bar item for a detailed modal breakdown
-- Watches `state.json` for live updates + 30s polling fallback
 
 **Install:**
 
+First, install the CLI hooks (if you haven't already):
+
 ```bash
-cd vscode-extension
+git clone https://github.com/boyand/cc-budget /tmp/cc-budget
+cd /tmp/cc-budget && ./install.sh
+```
+
+Then build and install the VS Code extension:
+
+```bash
+cd /tmp/cc-budget/vscode-extension
 npx @vscode/vsce package --no-dependencies
 code --install-extension cc-budget-0.1.0.vsix
 ```
 
-Or for development, open `vscode-extension/` in VS Code and press F5 to launch an Extension Development Host.
+Reload VS Code (Cmd+Shift+P → "Developer: Reload Window") and the status bar item appears at the bottom right.
+
+**Development:**
+
+Open `vscode-extension/` in VS Code and press F5 to launch an Extension Development Host.
 
 The extension reads the same `~/.claude/cc-budget/state.json` and `~/.config/cc-budget/config.json` as the CLI — no extra configuration needed.
 
