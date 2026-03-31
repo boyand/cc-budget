@@ -2,7 +2,7 @@
 
 Budget intelligence for Claude Code — right in your VS Code status bar.
 
-![Status Bar Preview](https://raw.githubusercontent.com/boyand/cc-budget/main/demo/cc-budget-preview-cropped.png)
+![Status Bar Preview](https://raw.githubusercontent.com/boyand/cc-budget/main/demo/vscode-extension-statusbar.png)
 
 ## What it does
 

@@ -158,6 +158,8 @@ Zero external dependencies. Zero API calls. All data comes from Claude Code's bu
 
 A companion VS Code extension shows cc-budget data in your editor's status bar — visible without switching to the Claude Code terminal.
 
+![VS Code extension status bar](demo/vscode-extension-statusbar.png)
+
 **What you see:**
 
 ```
