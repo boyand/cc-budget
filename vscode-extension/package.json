@@ -1,0 +1,29 @@
+{
+  "name": "cc-budget",
+  "displayName": "cc-budget",
+  "description": "Claude Code budget monitor — pacing, per-prompt cost, peak/off-peak awareness in your VS Code status bar",
+  "version": "0.1.0",
+  "publisher": "cc-budget",
+  "license": "MIT",
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": ["Other"],
+  "activationEvents": ["*"],
+  "main": "./src/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "cc-budget.showDetails",
+        "title": "cc-budget: Show Budget Details"
+      },
+      {
+        "command": "cc-budget.refresh",
+        "title": "cc-budget: Refresh"
+      }
+    ]
+  },
+  "scripts": {
+    "package": "npx @vscode/vsce package --no-dependencies"
+  }
+}

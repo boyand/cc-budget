@@ -154,6 +154,30 @@ Widget mode outputs only what ccstatusline doesn't have: pacing, per-prompt delt
 
 Zero external dependencies. Zero API calls. All data comes from Claude Code's built-in status line JSON.
 
+## VS Code Extension
+
+A companion VS Code extension shows cc-budget data in your editor's status bar — no terminal needed.
+
+**Features:**
+- Status bar item with 5h usage %, pace indicator, and per-prompt delta
+- Background color changes at warning (70%) and critical (90%) thresholds
+- Native VS Code notifications at threshold crossings
+- Hover tooltip with full details (reset time, 7d usage, peak status)
+- Click the status bar item for a detailed modal breakdown
+- Watches `state.json` for live updates + 30s polling fallback
+
+**Install:**
+
+```bash
+cd vscode-extension
+npx @vscode/vsce package --no-dependencies
+code --install-extension cc-budget-0.1.0.vsix
+```
+
+Or for development, open `vscode-extension/` in VS Code and press F5 to launch an Extension Development Host.
+
+The extension reads the same `~/.claude/cc-budget/state.json` and `~/.config/cc-budget/config.json` as the CLI — no extra configuration needed.
+
 ## Uninstall
 
 ```bash
