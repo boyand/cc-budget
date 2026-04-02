@@ -51,7 +51,7 @@ Spend history is stored in `~/.claude/cc-budget/state.json` keyed by session ID,
 ## Install
 
 ```bash
-git clone https://github.com/user/cc-budget /tmp/cc-budget
+git clone https://github.com/boyand/cc-budget /tmp/cc-budget
 cd /tmp/cc-budget && ./install.sh
 ```
 
