@@ -5,7 +5,8 @@
     "warn_7d": 80,
     "critical_7d": 90,
     "warn_cost_usd": 5,
-    "critical_cost_usd": 20
+    "critical_cost_usd": 20,
+    "expensive_delta": 5
   },
   "peak": {
     "start_hour": 5,

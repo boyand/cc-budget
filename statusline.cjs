@@ -75,6 +75,7 @@ ${B}EXAMPLES${R}
   console.log(`  ${D}Moderate:${R}     ${formatStatusLine(mk(55, 42, 2.5, 2.1), config, false)}`);
   console.log(`  ${D}Warning:${R}      ${formatStatusLine(mk(78, 45, 1.5, 3.5), config, true)}`);
   console.log(`  ${D}Critical:${R}     ${formatStatusLine(mk(94, 86, 0.5, 8.2), config, true)}`);
+  console.log(`  ${D}Cold start:${R}   ${formatStatusLine(mk(55, 42, 2.5, 8.2), config, false, true)}`);
   const today = new Date().toISOString().slice(0, 10);
   const month = today.slice(0, 7);
   const mkLedger = (sessions) => Object.fromEntries(sessions.map(([id, cost, d]) => [id, { cost, day: d || today, month: (d || today).slice(0, 7) }]));
@@ -103,13 +104,13 @@ function main() {
     const { formatStatusLine, formatWidget } = require('./lib/format.cjs');
 
     const config = loadConfig();
-    const state = updateFromStatusLine(input);
+    const { state, coldStart } = updateFromStatusLine(input);
     state.is_peak = isPeak(config.peak);
     writeState(state);
 
     const output = WIDGET_MODE
       ? formatWidget(state, config, state.is_peak)
-      : formatStatusLine(state, config, state.is_peak);
+      : formatStatusLine(state, config, state.is_peak, coldStart);
     process.stdout.write(output);
   } catch (e) {
     // Silent -- stderr triggers Claude Code's "hook error" display

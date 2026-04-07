@@ -10,7 +10,7 @@ function readWarned() {
   try {
     return JSON.parse(fs.readFileSync(WARNED_FILE, 'utf-8'));
   } catch {
-    return { five_hour: null, seven_day: null };
+    return { five_hour: null, seven_day: null, expensive_delta: null };
   }
 }
 
@@ -66,6 +66,15 @@ function main() {
     const warnings = [];
 
     const pct5h = fh.pct;
+
+    // Expensive prompt alert — fires once per 5h window
+    const delta5h = state.delta && state.delta.five_hour;
+    const deltaSessionId = state.delta_session_id;
+    const expThresh = thresholds.expensive_delta ?? 5;
+    if (typeof delta5h === 'number' && delta5h >= expThresh && deltaSessionId && deltaSessionId === input.session_id && !warned.expensive_delta) {
+      warnings.push(`[cc-budget] Last prompt used ${delta5h.toFixed(1)}% of 5h window. Consider lowering effort or switching to Sonnet.`);
+      warned.expensive_delta = true;
+    }
 
     if (pct5h >= thresholds.critical_5h && warned.five_hour !== thresholds.critical_5h) {
       warnings.push(`[cc-budget] 5h usage at ${Math.round(pct5h)}%. Resets in ${formatResetTime(fh.resets_at)}. Consider waiting.`);
