@@ -72,7 +72,10 @@ function main() {
     const deltaSessionId = state.delta_session_id;
     const expThresh = thresholds.expensive_delta ?? 5;
     if (typeof delta5h === 'number' && delta5h >= expThresh && deltaSessionId && deltaSessionId === input.session_id && !warned.expensive_delta) {
-      warnings.push(`[cc-budget] Last prompt used ${delta5h.toFixed(1)}% of 5h window. Consider lowering effort or switching to Sonnet.`);
+      const onFable = typeof state.model === 'string' && state.model.includes('fable');
+      warnings.push(onFable
+        ? `[cc-budget] Last prompt used ${delta5h.toFixed(1)}% of 5h window on Fable. Consider switching to Opus or Sonnet.`
+        : `[cc-budget] Last prompt used ${delta5h.toFixed(1)}% of 5h window. Consider lowering effort or switching to Sonnet.`);
       warned.expensive_delta = true;
     }
 

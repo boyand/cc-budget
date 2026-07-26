@@ -98,6 +98,11 @@ function main() {
     if (!raw.trim()) return;
 
     const input = JSON.parse(raw);
+    // Debug tap: keep the last raw payload for inspecting what Claude Code sends
+    try {
+      const path = require('path');
+      fs.writeFileSync(path.join(process.env.HOME, '.claude', 'cc-budget', 'last-input.json'), raw);
+    } catch {}
     const { loadConfig } = require('./lib/config.cjs');
     const { updateFromStatusLine, writeState } = require('./lib/state.cjs');
     const { isPeak } = require('./lib/peak.cjs');
