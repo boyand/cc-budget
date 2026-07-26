@@ -59,6 +59,14 @@ ${B}7-DAY WINDOW${R}
   Shown automatically when 7d usage exceeds 50% or 5h is critical.
   Same bar + pace format as the 5h window.
 
+${B}FABLE / PER-MODEL LIMITS${R}
+
+  ${Y}fable${R}            Tag shown while Fable 5 is the active model —
+                   prompts burn the window at Fable weight (~2× Opus).
+  ${G}Fable${R} ${G}▓▓${R}${WHITE_BOLD}│${R}${G}░░░${R} ${G}41%${R}  Fable's separate weekly cap (the /usage "Fable"
+                   row). Shown while on Fable, or above 50%.
+                   Same bar + pace format, over a 7-day window.
+
 ${B}EXAMPLES${R}
 `);
 
@@ -76,6 +84,7 @@ ${B}EXAMPLES${R}
   console.log(`  ${D}Warning:${R}      ${formatStatusLine(mk(78, 45, 1.5, 3.5), config, true)}`);
   console.log(`  ${D}Critical:${R}     ${formatStatusLine(mk(94, 86, 0.5, 8.2), config, true)}`);
   console.log(`  ${D}Cold start:${R}   ${formatStatusLine(mk(55, 42, 2.5, 8.2), config, false, true)}`);
+  console.log(`  ${D}On Fable:${R}     ${formatStatusLine({ ...mk(34, 20, 2, 1.2), model: 'claude-fable-5', model_scoped: [{ name: 'Fable', pct: 41, resets_at: Math.floor(Date.now()/1000) + 100*3600 }] }, config, false)}`);
   const today = new Date().toISOString().slice(0, 10);
   const month = today.slice(0, 7);
   const mkLedger = (sessions) => Object.fromEntries(sessions.map(([id, cost, d]) => [id, { cost, day: d || today, month: (d || today).slice(0, 7) }]));

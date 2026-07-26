@@ -18,6 +18,14 @@ cc-budget adds budget intelligence to Claude Code's status line — pacing targe
 
 **Per-prompt delta** — See what each prompt actually costs as a percentage of your 5h window. A simple question might be `(+0.3)`, a multi-agent plan execution could be `(+12.5)`.
 
+**Fable tracking** — Fable 5 costs ~2× Opus and has its own weekly cap (the "Fable" row in `/usage`), tracked separately from the shared windows. cc-budget shows a yellow `fable` tag while Fable is the active model, renders Fable's weekly limit as its own bar, and names Fable in the expensive-prompt warning:
+
+```
+5h ▓▓▓│░░░░░ 34% (+1.2) ⇣5% ➞2h10m fable │ Fable ▓▓│░░░ 41% ⇡8% │ ▽ off-peak 3h15m
+```
+
+The Fable bar appears while Fable is active or once its cap passes 50%. Any per-model window Claude Code reports renders the same way — nothing is hardcoded to Fable. (The bar needs a Claude Code version that includes `model_scoped` in the status line JSON; without it, only the tag shows.)
+
 **Peak/off-peak** — Anthropic charges more during peak hours (5-11 AM PT, weekdays). cc-budget detects this across all timezones and shows a countdown: `▲ peak 3h22m left` or `▽ off-peak 21h05m`.
 
 **Threshold warnings** — At 90% and 95% usage, a terse warning is injected before your prompt (once per crossing, under 20 tokens). No spam, no blocking — just awareness when it matters.
@@ -163,14 +171,15 @@ A companion VS Code extension shows cc-budget data in your editor's status bar �
 **What you see:**
 
 ```
-$(dashboard) 5h: 55% ⇣3% (+1.2) | 7d: 82% ▲pk
+$(dashboard) 5h: 55% ⇣3% (+1.2) | 7d: 82% | Fable: 41% ▲pk
 ```
 
 - 5h and 7d usage percentages
+- Per-model weekly limits (e.g. Fable's separate cap), with notifications at the 7d thresholds
 - Pace indicator (⇡ over / ⇣ under)
 - Per-prompt delta cost
 - Peak hours indicator
-- Background color: yellow at 70%, red at 90% (uses worst of 5h/7d)
+- Background color: yellow at 70%, red at 90% (uses worst of 5h/7d/model windows)
 - Click for a detailed modal breakdown
 - Native VS Code notifications at threshold crossings
 
@@ -188,7 +197,7 @@ Then build and install the VS Code extension:
 ```bash
 cd /tmp/cc-budget/vscode-extension
 npx @vscode/vsce package --no-dependencies
-code --install-extension cc-budget-0.1.0.vsix
+code --install-extension cc-budget-0.2.0.vsix
 ```
 
 Reload VS Code (Cmd+Shift+P → "Developer: Reload Window") and the status bar item appears at the bottom right.

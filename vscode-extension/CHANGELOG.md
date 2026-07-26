@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.2.0
+
+- Per-model weekly limits (e.g. the separate Fable 5 cap from /usage): status bar segment, tooltip and details lines, background severity, and native notifications at the 7d thresholds
+
 ## 0.1.0
 
 - Initial release

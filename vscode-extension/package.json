@@ -2,7 +2,7 @@
   "name": "cc-budget",
   "displayName": "cc-budget",
   "description": "Claude Code budget monitor — pacing, per-prompt cost, peak/off-peak awareness in your VS Code status bar",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "publisher": "cc-budget",
   "license": "MIT",
   "author": {

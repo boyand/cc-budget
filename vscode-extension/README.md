@@ -9,6 +9,7 @@ Budget intelligence for Claude Code — right in your VS Code status bar.
 Surfaces your Claude Code usage data in the VS Code status bar so you can see it without switching to the terminal:
 
 - **5h usage %** with progress toward your rate limit
+- **Per-model weekly limits** — e.g. Fable 5's separate cap (the "Fable" row in `/usage`), with its own threshold notifications
 - **Pace indicator** — are you burning too fast or have headroom?
 - **Per-prompt delta** — what each prompt actually cost
 - **Peak/off-peak** awareness (Anthropic charges more 5-11 AM PT weekdays)

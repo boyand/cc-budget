@@ -20,7 +20,14 @@ const DEFAULTS = {
 let statusBarItem;
 let watcher;
 let pollInterval;
-let lastWarned = { five_hour: null, seven_day: null };
+let lastWarned = { five_hour: null, seven_day: null, model_scoped: {} };
+
+/** Per-model weekly windows (e.g. Fable's separate cap). Account-level data,
+ * safe to mirror here — unlike state.model, which is last-writer-wins across
+ * concurrent sessions and would flicker. */
+function modelScoped(state) {
+  return Array.isArray(state.model_scoped) ? state.model_scoped : [];
+}
 
 function activate(context) {
   statusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 50);
@@ -179,13 +186,22 @@ function update() {
     text += ` | 7d: ${pct7d}%`;
   }
 
+  // Per-model weekly limits (e.g. Fable's separate cap)
+  for (const m of modelScoped(state)) {
+    text += ` | ${m.name}: ${Math.round(m.pct)}%`;
+  }
+
   // Peak indicator
   if (peak) text += ' \u25B2pk';
 
   statusBarItem.text = text;
 
-  // Background color for severity (use worst of 5h and 7d)
-  const worstPct = sd ? Math.max(pct, Math.round(sd.pct)) : pct;
+  // Background color for severity (use worst of 5h, 7d, and model windows)
+  const worstPct = Math.max(
+    pct,
+    sd ? Math.round(sd.pct) : 0,
+    ...modelScoped(state).map(m => Math.round(m.pct))
+  );
   if (worstPct >= 90) {
     statusBarItem.backgroundColor = new vscode.ThemeColor('statusBarItem.errorBackground');
   } else if (worstPct >= 70) {
@@ -206,6 +222,11 @@ function update() {
     lines.push(`Last prompt: +${state.delta.five_hour.toFixed(1)}%`);
   }
   if (sd) lines.push(`7d usage: ${Math.round(sd.pct)}%`);
+  for (const m of modelScoped(state)) {
+    let line = `${m.name} weekly: ${Math.round(m.pct)}%`;
+    if (m.resets_at) line += ` (resets in ${formatResetTime(m.resets_at)})`;
+    lines.push(line);
+  }
   lines.push(peak ? 'Peak hours (higher cost)' : 'Off-peak');
   if (state.ts) {
     const ago = Math.round((Date.now() - state.ts) / 1000);
@@ -215,10 +236,10 @@ function update() {
   statusBarItem.show();
 
   // Threshold notifications (once per crossing, matches CLI behavior)
-  checkThresholds(fh, sd, config, peak);
+  checkThresholds(fh, sd, config, peak, state);
 }
 
-function checkThresholds(fh, sd, config, peak) {
+function checkThresholds(fh, sd, config, peak, state) {
   const { thresholds } = config;
   const pct5h = fh.pct;
 
@@ -240,6 +261,20 @@ function checkThresholds(fh, sd, config, peak) {
     } else if (pct7d >= thresholds.warn_7d && (lastWarned.seven_day == null || lastWarned.seven_day < thresholds.warn_7d)) {
       vscode.window.showWarningMessage(`cc-budget: 7d usage at ${Math.round(pct7d)}%.`);
       lastWarned.seven_day = thresholds.warn_7d;
+    }
+  }
+
+  // Per-model weekly windows (e.g. Fable) — reuse the 7d thresholds
+  for (const m of modelScoped(state)) {
+    const warned = lastWarned.model_scoped[m.name];
+    if (m.pct >= thresholds.critical_7d && warned !== thresholds.critical_7d) {
+      vscode.window.showErrorMessage(`cc-budget: ${m.name} weekly usage at ${Math.round(m.pct)}%.`);
+      lastWarned.model_scoped[m.name] = thresholds.critical_7d;
+    } else if (m.pct >= thresholds.warn_7d && (warned == null || warned < thresholds.warn_7d)) {
+      vscode.window.showWarningMessage(`cc-budget: ${m.name} weekly usage at ${Math.round(m.pct)}%.`);
+      lastWarned.model_scoped[m.name] = thresholds.warn_7d;
+    } else if (m.pct < thresholds.warn_7d) {
+      lastWarned.model_scoped[m.name] = null;
     }
   }
 
@@ -288,6 +323,12 @@ function showDetails() {
       lines.push('');
       lines.push(`7d window: ${Math.round(sd.pct)}%`);
       if (sd.resets_at) lines.push(`  Resets in: ${formatResetTime(sd.resets_at)}`);
+    }
+
+    for (const m of modelScoped(state)) {
+      lines.push('');
+      lines.push(`${m.name} weekly limit: ${Math.round(m.pct)}%`);
+      if (m.resets_at) lines.push(`  Resets in: ${formatResetTime(m.resets_at)}`);
     }
 
     lines.push('');
