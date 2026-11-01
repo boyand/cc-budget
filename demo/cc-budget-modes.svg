@@ -1,30 +1,31 @@
-<svg width="560" height="44" xmlns="http://www.w3.org/2000/svg">
+<svg width="830" height="44" viewBox="0 0 830 44" xmlns="http://www.w3.org/2000/svg">
   <defs>
-    <clipPath id="outer"><rect width="560" height="44" rx="6"/></clipPath>
+    <clipPath id="outer"><rect width="830" height="44" rx="6"/></clipPath>
     <style>
-      @keyframes m1{0%,37%{opacity:1}43%,90%{opacity:0}97%,100%{opacity:1}}
-      @keyframes m2{0%,43%{opacity:0}50%,87%{opacity:1}93%,100%{opacity:0}}
-      .m1{animation:m1 8s ease-in-out infinite}
-      .m2{animation:m2 8s ease-in-out infinite}
+      @keyframes cyc{0%{opacity:0}2%,23.0%{opacity:1}25%,100%{opacity:0}}
+      .m{animation:cyc 16s ease-in-out infinite}
       text{font-family:'SFMono-Regular',Consolas,'Liberation Mono',Menlo,monospace;font-size:12px}
     </style>
   </defs>
   <g clip-path="url(#outer)">
-    <!-- Backgrounds -->
-    <rect width="560" height="44" fill="#161b22"/>
-    <rect width="105" height="44" fill="#21262d"/>
-    <line x1="105" y1="8" x2="105" y2="36" stroke="#30363d" stroke-width="1"/>
-
-    <!-- Mode 1: Max / Pro -->
-    <g class="m1">
-      <text x="20" y="27" fill="#8b949e">Max / Pro</text>
-      <text x="118" y="27" xml:space="preserve"><tspan font-weight="bold" fill="#3fb950">5h</tspan><tspan fill="#3fb950"> ▓▓▓▓</tspan><tspan fill="#e6edf3" font-weight="bold">│</tspan><tspan fill="#3fb950">░░░</tspan><tspan fill="#3fb950"> 55%</tspan><tspan fill="#8b949e"> (+2.1)</tspan><tspan fill="#f85149"> ⇡5%</tspan><tspan fill="#8b949e"> ➞2h29m</tspan><tspan fill="#8b949e">  │  </tspan><tspan fill="#3fb950">▽</tspan><tspan fill="#8b949e"> off-peak 3h22m</tspan></text>
+    <rect width="830" height="44" fill="#161b22"/>
+    <rect width="110" height="44" fill="#21262d"/>
+    <line x1="110" y1="8" x2="110" y2="36" stroke="#30363d" stroke-width="1"/>
+    <g class="m" style="animation-delay:-0s">
+      <text x="36.95" y="27" fill="#8b949e">Ultra</text>
+      <text x="124" y="27" xml:space="preserve"><tspan fill="#3fb950" font-weight="bold">7d</tspan><tspan fill="#e6edf3"> </tspan><tspan fill="#3fb950">▓▓▓▓</tspan><tspan fill="#e6edf3" font-weight="bold">│</tspan><tspan fill="#3fb950">▓▓░░</tspan><tspan fill="#e6edf3"> </tspan><tspan fill="#3fb950">69%</tspan><tspan fill="#e6edf3"> </tspan><tspan fill="#8b949e">(+0.6)</tspan><tspan fill="#e6edf3"> </tspan><tspan fill="#d29922">cold 153k</tspan><tspan fill="#e6edf3"> </tspan><tspan fill="#f85149">⇡18%</tspan><tspan fill="#e6edf3"> </tspan><tspan fill="#8b949e">➞3d10h</tspan><tspan fill="#8b949e"> │ </tspan><tspan fill="#8b949e">today 6/11%</tspan><tspan fill="#8b949e"> │ </tspan><tspan fill="#ff7b72">out Thu 04:38</tspan><tspan fill="#8b949e"> │ </tspan><tspan fill="#3fb950">▽</tspan><tspan fill="#e6edf3"> </tspan><tspan fill="#8b949e">off-peak</tspan><tspan fill="#e6edf3"> </tspan><tspan fill="#8b949e">15h00m</tspan></text>
     </g>
-
-    <!-- Mode 2: Enterprise -->
-    <g class="m2">
-      <text x="17" y="27" fill="#8b949e">Enterprise</text>
-      <text x="118" y="27"><tspan fill="#f85149">$14.50</tspan><tspan fill="#8b949e"> (+$2.15)</tspan><tspan fill="#8b949e">  │  </tspan><tspan fill="#8b949e">$22.80 today</tspan><tspan fill="#8b949e">  │  </tspan><tspan fill="#8b949e">$34.90 Mar</tspan></text>
+    <g class="m" style="animation-delay:-12s" opacity="0">
+      <text x="22.509999999999998" y="27" fill="#8b949e">Max / Pro</text>
+      <text x="124" y="27" xml:space="preserve"><tspan fill="#3fb950" font-weight="bold">5h</tspan><tspan fill="#e6edf3"> </tspan><tspan fill="#3fb950">▓▓▓▓</tspan><tspan fill="#e6edf3" font-weight="bold">│</tspan><tspan fill="#3fb950">░░░░</tspan><tspan fill="#e6edf3"> </tspan><tspan fill="#3fb950">55%</tspan><tspan fill="#e6edf3"> </tspan><tspan fill="#8b949e">(+2.1)</tspan><tspan fill="#e6edf3"> </tspan><tspan fill="#f85149">⇡5%</tspan><tspan fill="#e6edf3"> </tspan><tspan fill="#8b949e">➞2h30m</tspan><tspan fill="#8b949e"> │ </tspan><tspan fill="#3fb950">▽</tspan><tspan fill="#e6edf3"> </tspan><tspan fill="#8b949e">off-peak</tspan><tspan fill="#e6edf3"> </tspan><tspan fill="#8b949e">15h00m</tspan></text>
+    </g>
+    <g class="m" style="animation-delay:-8s" opacity="0">
+      <text x="29.73" y="27" fill="#8b949e">Gateway</text>
+      <text x="124" y="27" xml:space="preserve"><tspan fill="#3fb950">$3.10</tspan><tspan fill="#e6edf3"> </tspan><tspan fill="#8b949e">(+$0.40)</tspan><tspan fill="#8b949e"> │ </tspan><tspan fill="#3fb950">spend</tspan><tspan fill="#e6edf3"> </tspan><tspan fill="#3fb950">▓▓▓</tspan><tspan fill="#e6edf3" font-weight="bold">│</tspan><tspan fill="#3fb950">░░</tspan><tspan fill="#e6edf3"> </tspan><tspan fill="#3fb950">54%</tspan><tspan fill="#e6edf3"> </tspan><tspan fill="#8b949e">$271/$500 mo</tspan><tspan fill="#e6edf3"> </tspan><tspan fill="#3fb950">⇣7%</tspan><tspan fill="#e6edf3"> </tspan><tspan fill="#8b949e">➞11d23h</tspan><tspan fill="#8b949e"> │ </tspan><tspan fill="#8b949e">$2.04 today</tspan></text>
+    </g>
+    <g class="m" style="animation-delay:-4s" opacity="0">
+      <text x="18.9" y="27" fill="#8b949e">API / PAYG</text>
+      <text x="124" y="27" xml:space="preserve"><tspan fill="#d29922">$14.50</tspan><tspan fill="#e6edf3"> </tspan><tspan fill="#8b949e">(+$2.15)</tspan><tspan fill="#8b949e"> │ </tspan><tspan fill="#8b949e">$22.80 today</tspan><tspan fill="#8b949e"> │ </tspan><tspan fill="#8b949e">$34.90 Nov</tspan></text>
     </g>
   </g>
 </svg>

@@ -246,6 +246,13 @@ Open `vscode-extension/` in VS Code and press F5 to launch an Extension Developm
 
 The extension reads the same `~/.claude/cc-budget/state.json` and `~/.config/cc-budget/config.json` as the CLI and needs no extra configuration.
 
+## Development
+
+```bash
+node --test test.cjs     # end-to-end tests: runs statusline.cjs and hook.cjs against a temp HOME
+node demo/render.cjs     # regenerates the demo images from the real renderers (needs Chrome for the PNGs)
+```
+
 ## Uninstall
 
 ```bash
