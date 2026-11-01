@@ -44,8 +44,11 @@ node -e "
 const fs = require('fs');
 const settings = JSON.parse(fs.readFileSync('$SETTINGS', 'utf-8'));
 
-// Add statusLine
+// Add statusLine. Keep the user's padding/refreshInterval; refreshInterval
+// lets the cache-expiry and countdown markers update while idle.
 settings.statusLine = {
+  refreshInterval: 30,
+  ...(settings.statusLine || {}),
   type: 'command',
   command: 'node $HOOK_DIR/statusline.cjs'
 };

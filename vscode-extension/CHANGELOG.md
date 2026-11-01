@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.3.0
+
+- Ultra accounts (no 5-hour limit): the weekly window becomes the main status bar segment, with its pace and per-prompt delta, instead of falling back to "API session cost"
+- Claude gateway spend limit shown next to session cost, with severity colors
+- Reset times past 24h read as days (`3d05h`)
+
 ## 0.2.0
 
 - Per-model weekly limits (e.g. the separate Fable 5 cap from /usage): status bar segment, tooltip and details lines, background severity, and native notifications at the 7d thresholds

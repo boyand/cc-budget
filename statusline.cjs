@@ -22,10 +22,10 @@ ${B}STATUS LINE LAYOUT${R}
   ${D}──${R}  ${D}───────────${R}  ${D}───${R} ${D}──────${R} ${D}────${R} ${D}──────${R}     ${D}─────────────────${R}
   ${D}│${R}   ${D}│${R}            ${D}│${R}   ${D}│${R}       ${D}│${R}    ${D}│${R}         ${D}│${R}
   ${D}│${R}   ${D}│${R}            ${D}│${R}   ${D}│${R}       ${D}│${R}    ${D}│${R}         ${D}└─ peak/off-peak + time${R}
-  ${D}│${R}   ${D}│${R}            ${D}│${R}   ${D}│${R}       ${D}│${R}    ${D}└─ ➞ time until 5h window resets${R}
+  ${D}│${R}   ${D}│${R}            ${D}│${R}   ${D}│${R}       ${D}│${R}    ${D}└─ ➞ time until the window resets${R}
   ${D}│${R}   ${D}│${R}            ${D}│${R}   ${D}│${R}       ${D}└─ ⇣ under pace (headroom)${R}
   ${D}│${R}   ${D}│${R}            ${D}│${R}   ${D}│${R}          ${Rd}⇡ over pace (burning too fast)${R}
-  ${D}│${R}   ${D}│${R}            ${D}│${R}   ${D}└─ (+N.N) cost of last prompt (% of 5h window)${R}
+  ${D}│${R}   ${D}│${R}            ${D}│${R}   ${D}└─ (+N.N) cost of last prompt (% of this window)${R}
   ${D}│${R}   ${D}│${R}            ${D}└─ usage percentage${R}
   ${D}│${R}   ${D}└─ progress bar with pacing marker${R}
   ${D}└─ window label (5h or 7d)${R}
@@ -54,18 +54,34 @@ ${B}PEAK / OFF-PEAK${R}
                           Budget depletes faster during peak.
   ${G}▽${R} ${D}off-peak 21h05m${R}    Off-peak: normal rate. Time until peak starts.
 
-${B}7-DAY WINDOW${R}
+${B}7-DAY (WEEKLY) WINDOW${R}
 
-  Shown automatically when 7d usage exceeds 50% or 5h is critical.
-  Same bar + pace format as the 5h window.
+  Pro / Max: shown next to 5h when weekly usage passes 50%, 5h is
+  critical, or the week is projected to run out.
+  Ultra (no 5-hour limit): 7d ${B}is${R} the main bar, delta in % of the week.
+
+  ${D}today 6/9%${R}       Weekly % used today / even daily share left.
+                   ${Y}yellow${R} over share, ${Br}red${R} over 1.5×.
+  ${Br}out Thu 14:00${R}    At this week's average pace you hit 100% then,
+                   before the reset. Hidden if you make it.
 
 ${B}FABLE / PER-MODEL LIMITS${R}
 
-  ${Y}fable${R}            Tag shown while Fable 5 is the active model —
-                   prompts burn the window at Fable weight (~2× Opus).
-  ${G}Fable${R} ${G}▓▓${R}${WHITE_BOLD}│${R}${G}░░░${R} ${G}41%${R}  Fable's separate weekly cap (the /usage "Fable"
-                   row). Shown while on Fable, or above 50%.
-                   Same bar + pace format, over a 7-day window.
+  ${Y}fable${R}            Tag shown while Fable is the active model.
+  ${G}Fable${R} ${G}▓▓${R}${WHITE_BOLD}│${R}${G}░░░${R} ${G}41%${R}  Fable's weekly cap (the /usage "Fable" row; on
+                   Max/Ultra up to half your weekly limit). Past it,
+                   Fable bills usage credits. Pro: credits from the start.
+
+${B}OTHER TAGS${R}
+
+  ${Y}fast${R} ${Y}xhigh${R} ${Y}max${R}   Fast mode / high effort: each prompt costs more.
+
+${B}PROMPT CACHE${R}
+
+  ${D}(+8.2 cold)${R}      Last prompt rebuilt the prompt cache (pricier).
+  ${Y}cold 153k${R}        Cache expired: next prompt re-caches 153k tokens.
+  ${D}${Y}cache 8m${R}         Cache goes cold in 8 minutes.
+                   Needs statusLine.refreshInterval to update while idle.
 
 ${B}EXAMPLES${R}
 `);
@@ -84,7 +100,17 @@ ${B}EXAMPLES${R}
   console.log(`  ${D}Warning:${R}      ${formatStatusLine(mk(78, 45, 1.5, 3.5), config, true)}`);
   console.log(`  ${D}Critical:${R}     ${formatStatusLine(mk(94, 86, 0.5, 8.2), config, true)}`);
   console.log(`  ${D}Cold start:${R}   ${formatStatusLine(mk(55, 42, 2.5, 8.2), config, false, true)}`);
-  console.log(`  ${D}On Fable:${R}     ${formatStatusLine({ ...mk(34, 20, 2, 1.2), model: 'claude-fable-5', model_scoped: [{ name: 'Fable', pct: 41, resets_at: Math.floor(Date.now()/1000) + 100*3600 }] }, config, false)}`);
+  console.log(`  ${D}On Fable:${R}     ${formatStatusLine({ ...mk(34, 20, 2, 1.2), model: 'claude-fable-5-1', model_scoped: [{ name: 'Fable', pct: 41, resets_at: Math.floor(Date.now()/1000) + 100*3600 }] }, config, false)}`);
+  const ultra = (p7, resetH, d, extra) => ({
+    plan: 'sub',
+    rate_limits: { five_hour: null, seven_day: { pct: p7, resets_at: Math.floor(Date.now()/1000) + resetH*3600 } },
+    delta: { seven_day: d },
+    day: { date: 'x', at: Math.floor(Date.now()/1000) + resetH*3600, start_pct: p7 - 4, allowance: (100 - p7 + 4) / Math.max(1, resetH / 24) },
+    ...extra,
+  });
+  console.log(`  ${D}Ultra:${R}        ${formatStatusLine(ultra(38, 100, 0.4), config, false)}`);
+  console.log(`  ${D}Ultra, hot:${R}   ${formatStatusLine(ultra(81, 60, 1.3, { cache: { cold: true, recache_tokens: 153000, expires_at: 0 } }), config, false)}`);
+  console.log(`  ${D}Gateway:${R}      ${formatStatusLine({ plan: 'gateway', rate_limits: { spend_limit: { pct: 54, resets_at: Math.floor(Date.now()/1000) + 12*86400, used_usd: 271.4, limit_usd: 500, period: 'monthly' } }, session_cost_usd: 3.1, delta: { cost_usd: 0.4 } }, config, false)}`);
   const today = new Date().toISOString().slice(0, 10);
   const month = today.slice(0, 7);
   const mkLedger = (sessions) => Object.fromEntries(sessions.map(([id, cost, d]) => [id, { cost, day: d || today, month: (d || today).slice(0, 7) }]));

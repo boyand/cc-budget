@@ -8,7 +8,8 @@ Budget intelligence for Claude Code — right in your VS Code status bar.
 
 Surfaces your Claude Code usage data in the VS Code status bar so you can see it without switching to the terminal:
 
-- **5h usage %** with progress toward your rate limit
+- **5h usage %**, or the weekly limit on Ultra (Ultra has no 5-hour limit)
+- **Gateway spend limit** next to session cost when a Claude gateway sets one
 - **Per-model weekly limits** — e.g. Fable 5's separate cap (the "Fable" row in `/usage`), with its own threshold notifications
 - **Pace indicator** — are you burning too fast or have headroom?
 - **Per-prompt delta** — what each prompt actually cost
@@ -42,9 +43,10 @@ $(dashboard) 5h: 42% ⇣8% (+1.2)
 | Part | Meaning |
 |------|---------|
 | `5h: 42%` | 5-hour window usage |
+| `7d: 69%` | Weekly usage, shown first on Ultra |
 | `⇣8%` | 8% under pace (headroom) |
 | `⇡12%` | 12% over pace (burning too fast) |
-| `(+1.2)` | Last prompt cost 1.2% of window |
+| `(+1.2)` | Last prompt cost 1.2% of the window shown first |
 | `▲pk` | Peak hours active |
 
 ## Colors

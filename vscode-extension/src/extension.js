@@ -123,8 +123,17 @@ function formatResetTime(resetsAtEpochSec) {
   const totalMin = Math.floor(diff / 60000);
   const h = Math.floor(totalMin / 60);
   const m = totalMin % 60;
+  if (h >= 24) return `${Math.floor(h / 24)}d${String(h % 24).padStart(2, '0')}h`;
   if (h > 0) return `${h}h${String(m).padStart(2, '0')}m`;
   return `${m}m`;
+}
+
+/** Primary window: 5h when the plan has one, else 7d (Ultra has no 5-hour limit). */
+function primaryWindow(state) {
+  const { five_hour: fh, seven_day: sd } = state.rate_limits || {};
+  if (fh) return { label: '5h', w: fh, hours: 5, delta: state.delta && state.delta.five_hour };
+  if (sd) return { label: '7d', w: sd, hours: 168, delta: state.delta && state.delta.seven_day };
+  return null;
 }
 
 function update() {
@@ -140,13 +149,18 @@ function update() {
   const config = loadConfig();
   const fh = state.rate_limits.five_hour;
   const sd = state.rate_limits.seven_day;
+  const sl = state.rate_limits.spend_limit;
   const peak = isPeak(config.peak);
+  const primary = primaryWindow(state);
 
-  if (!fh) {
+  if (!primary) {
     if (state.session_cost_usd != null) {
-      statusBarItem.text = `$(credit-card) $${state.session_cost_usd.toFixed(2)}`;
-      statusBarItem.tooltip = 'API/PAYG session cost';
-      statusBarItem.backgroundColor = undefined;
+      statusBarItem.text = `$(credit-card) $${state.session_cost_usd.toFixed(2)}` + (sl ? ` | limit ${Math.round(sl.pct)}%` : '');
+      statusBarItem.tooltip = sl && sl.limit_usd != null && sl.used_usd != null
+        ? `Session cost (list price)\nSpend limit: $${sl.used_usd.toFixed(2)} / $${sl.limit_usd.toFixed(2)} (${sl.period || 'monthly'})`
+        : 'API/PAYG session cost';
+      statusBarItem.backgroundColor = sl && sl.pct >= 90 ? new vscode.ThemeColor('statusBarItem.errorBackground')
+        : sl && sl.pct >= 70 ? new vscode.ThemeColor('statusBarItem.warningBackground') : undefined;
     } else {
       statusBarItem.text = '$(pulse) cc-budget: ...';
       statusBarItem.tooltip = 'No rate limit data yet';
@@ -156,9 +170,10 @@ function update() {
     return;
   }
 
-  const pct = Math.round(fh.pct);
-  const pace = fh.resets_at ? paceTarget(fh.resets_at, 5) : null;
-  const paceDelta = pace != null ? Math.round(fh.pct - pace) : null;
+  const pw = primary.w;
+  const pct = Math.round(pw.pct);
+  const pace = pw.resets_at ? paceTarget(pw.resets_at, primary.hours) : null;
+  const paceDelta = pace != null ? Math.round(pw.pct - pace) : null;
 
   // Icon based on severity
   let icon;
@@ -167,7 +182,7 @@ function update() {
   else icon = '$(dashboard)';
 
   // Status bar text
-  let text = `${icon} 5h: ${pct}%`;
+  let text = `${icon} ${primary.label}: ${pct}%`;
 
   // Pace indicator
   if (paceDelta != null) {
@@ -176,12 +191,12 @@ function update() {
   }
 
   // Delta from last prompt
-  if (config.show_delta && state.delta && state.delta.five_hour > 0) {
-    text += ` (+${state.delta.five_hour.toFixed(1)})`;
+  if (config.show_delta && primary.delta >= 0.05) {
+    text += ` (+${primary.delta.toFixed(1)})`;
   }
 
-  // 7d usage
-  if (sd) {
+  // 7d usage (secondary when 5h is primary)
+  if (fh && sd) {
     const pct7d = Math.round(sd.pct);
     text += ` | 7d: ${pct7d}%`;
   }
@@ -211,17 +226,17 @@ function update() {
   }
 
   // Tooltip with full details
-  const lines = [`5h usage: ${pct}%`];
-  if (fh.resets_at) lines.push(`Resets in: ${formatResetTime(fh.resets_at)}`);
+  const lines = [`${primary.label} usage: ${pct}%`];
+  if (pw.resets_at) lines.push(`Resets in: ${formatResetTime(pw.resets_at)}`);
   if (paceDelta != null) {
     if (paceDelta > 2) lines.push(`Pace: ${Math.abs(paceDelta)}% over (burning too fast)`);
     else if (paceDelta < -2) lines.push(`Pace: ${Math.abs(paceDelta)}% under (headroom)`);
     else lines.push('Pace: on target');
   }
-  if (state.delta && state.delta.five_hour > 0) {
-    lines.push(`Last prompt: +${state.delta.five_hour.toFixed(1)}%`);
+  if (primary.delta >= 0.05) {
+    lines.push(`Last prompt: +${primary.delta.toFixed(1)}%`);
   }
-  if (sd) lines.push(`7d usage: ${Math.round(sd.pct)}%`);
+  if (fh && sd) lines.push(`7d usage: ${Math.round(sd.pct)}%`);
   for (const m of modelScoped(state)) {
     let line = `${m.name} weekly: ${Math.round(m.pct)}%`;
     if (m.resets_at) line += ` (resets in ${formatResetTime(m.resets_at)})`;
@@ -241,13 +256,13 @@ function update() {
 
 function checkThresholds(fh, sd, config, peak, state) {
   const { thresholds } = config;
-  const pct5h = fh.pct;
+  const pct5h = fh ? fh.pct : 0;
 
-  if (pct5h >= thresholds.critical_5h && lastWarned.five_hour !== thresholds.critical_5h) {
+  if (fh && pct5h >= thresholds.critical_5h && lastWarned.five_hour !== thresholds.critical_5h) {
     const msg = `cc-budget: 5h usage at ${Math.round(pct5h)}%. Resets in ${formatResetTime(fh.resets_at)}.${peak ? ' Peak hours — consider waiting.' : ''}`;
     vscode.window.showErrorMessage(msg);
     lastWarned.five_hour = thresholds.critical_5h;
-  } else if (pct5h >= thresholds.warn_5h && (lastWarned.five_hour == null || lastWarned.five_hour < thresholds.warn_5h)) {
+  } else if (fh && pct5h >= thresholds.warn_5h && (lastWarned.five_hour == null || lastWarned.five_hour < thresholds.warn_5h)) {
     const msg = `cc-budget: 5h usage at ${Math.round(pct5h)}%. Resets in ${formatResetTime(fh.resets_at)}.`;
     vscode.window.showWarningMessage(msg);
     lastWarned.five_hour = thresholds.warn_5h;
@@ -297,29 +312,33 @@ function showDetails() {
 
   const lines = ['cc-budget — Claude Code Usage', ''];
 
-  if (!fh) {
+  const primary = primaryWindow(state);
+  if (!primary) {
     if (state.session_cost_usd != null) {
       lines.push(`Session cost: $${state.session_cost_usd.toFixed(2)}`);
+      const sl = state.rate_limits.spend_limit;
+      if (sl) lines.push(`Spend limit: ${Math.round(sl.pct)}%` + (sl.limit_usd != null && sl.used_usd != null ? ` ($${sl.used_usd.toFixed(2)} / $${sl.limit_usd.toFixed(2)})` : ''));
     } else {
       lines.push('No rate limit data yet.');
     }
   } else {
-    const pct = Math.round(fh.pct);
-    const pace = fh.resets_at ? paceTarget(fh.resets_at, 5) : null;
+    const pw = primary.w;
+    const pct = Math.round(pw.pct);
+    const pace = pw.resets_at ? paceTarget(pw.resets_at, primary.hours) : null;
 
-    lines.push(`5h window: ${pct}%`);
-    if (fh.resets_at) lines.push(`  Resets in: ${formatResetTime(fh.resets_at)}`);
+    lines.push(`${primary.label} window: ${pct}%`);
+    if (pw.resets_at) lines.push(`  Resets in: ${formatResetTime(pw.resets_at)}`);
     if (pace != null) {
-      const delta = Math.round(fh.pct - pace);
+      const delta = Math.round(pw.pct - pace);
       if (delta > 2) lines.push(`  Pace: ${Math.abs(delta)}% over target`);
       else if (delta < -2) lines.push(`  Pace: ${Math.abs(delta)}% under target (headroom)`);
       else lines.push('  Pace: on target');
     }
-    if (state.delta && state.delta.five_hour > 0) {
-      lines.push(`  Last prompt cost: +${state.delta.five_hour.toFixed(1)}%`);
+    if (primary.delta >= 0.05) {
+      lines.push(`  Last prompt cost: +${primary.delta.toFixed(1)}%`);
     }
 
-    if (sd) {
+    if (fh && sd) {
       lines.push('');
       lines.push(`7d window: ${Math.round(sd.pct)}%`);
       if (sd.resets_at) lines.push(`  Resets in: ${formatResetTime(sd.resets_at)}`);
